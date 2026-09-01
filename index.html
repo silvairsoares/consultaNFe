@@ -302,18 +302,19 @@
             });
 
             btnAbrir.addEventListener('click', function() {
-                if (!chaveLimpa) return;
-                let url;
-                if (radioHomolog.checked) {
-                    url = URL_HOMOLOG;
-                } else {
-                    url = URL_PRODUCAO;
-                }
-                // Abrir a página da SEFAZ em uma nova aba
-                window.open(url, '_blank');
-                // Mensagem de instrução
-                alert('A página da SEFAZ foi aberta. Cole a chave no campo (Ctrl+V) e resolva o captcha.');
-            });
+				if (!chaveLimpa) return;
+				let urlBase;
+				if (radioHomolog.checked) {
+					urlBase = URL_HOMOLOG;
+				} else {
+					urlBase = URL_PRODUCAO;
+				}
+				// Adiciona a chave como parâmetro
+				const urlFinal = urlBase + '&ChaveAcesso=' + encodeURIComponent(chaveLimpa);
+				window.open(urlFinal, '_blank');
+				// Mensagem opcional (já não precisará mais copiar/colar)
+				alert('A página da SEFAZ foi aberta. O campo da chave já foi preenchido automaticamente pelo userscript. Basta resolver o captcha e clicar em "Continuar".');
+			});
 
             // Remover erro ao digitar
             chaveInput.addEventListener('input', function() {
