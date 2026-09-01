@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta NF-e - Preparar Chave</title>
+    <style>
+        * { box-sizing: border-box; font-family: system-ui, sans-serif; }
+        body {
+            background: #f5f7fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 40px 35px;
+            max-width: 550px;
+            width: 100%;
+        }
+        h1 {
+            font-size: 1.6rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            color: #1e293b;
+            text-align: center;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 1.8rem;
+        }
+        label {
+            display: block;
+            font-weight: 500;
+            color: #334155;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: border-color 0.2s;
+            background: #f8fafc;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59,130,246,0.15);
+            background: white;
+        }
+        .radio-group {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.25rem;
+            flex-wrap: wrap;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            color: #1e293b;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .radio-group input[type="radio"] {
+            width: 1.1rem;
+            height: 1.1rem;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 0.5rem;
+        }
+        .btn:hover { background: #2563eb; }
+        .btn:active { transform: scale(0.98); }
+        .btn-success {
+            background: #22c55e;
+        }
+        .btn-success:hover {
+            background: #16a34a;
+        }
+        .helper {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .helper span {
+            background: #f1f5f9;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #475569;
+        }
+        .error {
+            color: #dc2626;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: none;
+        }
+        .error.show { display: block; }
+        .chave-limpa {
+            background: #f1f5f9;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            margin: 10px 0;
+            display: none;
+            border: 1px dashed #94a3b8;
+        }
+        .chave-limpa.show {
+            display: block;
+        }
+        .copy-feedback {
+            color: #16a34a;
+            font-weight: 500;
+            display: none;
+            margin-top: 5px;
+        }
+        .copy-feedback.show {
+            display: block;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .steps {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #1e293b;
+            border-left: 4px solid #3b82f6;
+        }
+        .steps ol {
+            margin: 8px 0 0 0;
+            padding-left: 20px;
+        }
+        .steps ol li {
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>🔍 Consultar NF-e</h1>
+        
+        <div class="form-group">
+            <label for="chaveInput">Chave de acesso da NF-e</label>
+            <input type="text" id="chaveInput" placeholder="Ex: 5226 0805 4626 6200 0105 5500 7000 0004 5211 8859 0071" autocomplete="off">
+            <div class="helper">
+                <span>44 dígitos</span>
+                <span>Espaços serão removidos</span>
+            </div>
+            <div id="erroChave" class="error">A chave deve ter 44 dígitos numéricos.</div>
+        </div>
+
+        <div class="form-group">
+            <label>Ambiente</label>
+            <div class="radio-group">                
+                <label>
+                    <input type="radio" name="ambiente" value="producao" id="producao" checked>
+                    Produção
+                </label>
+				<label>
+                    <input type="radio" name="ambiente" value="homologacao" id="homologacao">
+                    Homologação
+                </label>
+            </div>
+        </div>
+
+        <button type="button" class="btn" id="btnPreparar">🔧 Preparar Chave</button>
+        
+        <div id="chaveLimpaDisplay" class="chave-limpa"></div>
+        <div id="copyFeedback" class="copy-feedback">✅ Chave copiada para a área de transferência!</div>
+
+        <button type="button" class="btn btn-success" id="btnAbrirSefaz" style="display: none;">🌐 Abrir SEFAZ e colar a chave</button>
+
+        <div class="steps">
+            <strong>Como usar:</strong>
+            <ol>
+                <li>Preencha a chave com ou sem espaços.</li>
+                <li>Clique em <strong>"Preparar Chave"</strong>.</li>
+                <li>A chave limpa será exibida e copiada automaticamente.</li>
+                <li>Clique em <strong>"Abrir SEFAZ"</strong>.</li>
+                <li>Na página da SEFAZ, cole a chave no campo (Ctrl+V) e resolva o captcha.</li>
+            </ol>
+        </div>
+
+        <div class="footer">
+            Projeto auxiliar para consulta NF-e
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const chaveInput = document.getElementById('chaveInput');
+            const erroChave = document.getElementById('erroChave');
+            const btnPreparar = document.getElementById('btnPreparar');
+            const btnAbrir = document.getElementById('btnAbrirSefaz');
+            const chaveDisplay = document.getElementById('chaveLimpaDisplay');
+            const copyFeedback = document.getElementById('copyFeedback');
+            const radioHomolog = document.getElementById('homologacao');
+            const radioProducao = document.getElementById('producao');
+
+            // URLs
+            const URL_HOMOLOG = 'https://hom.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=';
+            const URL_PRODUCAO = 'https://www.nfe.fazenda.gov.br/portal/consultaRecaptcha.aspx?tipoConsulta=resumo&tipoConteudo=7PhJ+gAVw2g=';
+
+            let chaveLimpa = '';
+
+            function validarChave(chave) {
+                const isNumeric = /^\d+$/.test(chave);
+                const isLengthOk = chave.length === 44;
+                if (!isNumeric || !isLengthOk) {
+                    let msg = isLengthOk ? 'A chave deve conter apenas números.' : 'A chave deve ter exatamente 44 dígitos numéricos.';
+                    erroChave.textContent = msg;
+                    erroChave.classList.add('show');
+                    return false;
+                } else {
+                    erroChave.classList.remove('show');
+                    return true;
+                }
+            }
+
+            function copiarChave() {
+                if (!chaveLimpa) return;
+                // Usar API Clipboard
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(chaveLimpa).then(() => {
+                        copyFeedback.classList.add('show');
+                        setTimeout(() => copyFeedback.classList.remove('show'), 3000);
+                    }).catch(err => {
+                        // Fallback: selecionar o texto e orientar Ctrl+C
+                        chaveDisplay.classList.add('show');
+                        const range = document.createRange();
+                        range.selectNode(chaveDisplay);
+                        window.getSelection().removeAllRanges();
+                        window.getSelection().addRange(range);
+                        copyFeedback.textContent = '⚠️ Selecione a chave abaixo e copie (Ctrl+C)';
+                        copyFeedback.classList.add('show');
+                        setTimeout(() => {
+                            copyFeedback.textContent = '✅ Chave copiada para a área de transferência!';
+                            copyFeedback.classList.remove('show');
+                        }, 5000);
+                    });
+                } else {
+                    // Fallback
+                    chaveDisplay.classList.add('show');
+                    const range = document.createRange();
+                    range.selectNode(chaveDisplay);
+                    window.getSelection().removeAllRanges();
+                    window.getSelection().addRange(range);
+                    copyFeedback.textContent = '⚠️ Selecione a chave abaixo e copie (Ctrl+C)';
+                    copyFeedback.classList.add('show');
+                    setTimeout(() => {
+                        copyFeedback.textContent = '✅ Chave copiada para a área de transferência!';
+                        copyFeedback.classList.remove('show');
+                    }, 5000);
+                }
+            }
+
+            btnPreparar.addEventListener('click', function() {
+                const raw = chaveInput.value;
+                chaveLimpa = raw.replace(/\s/g, '');
+                if (!validarChave(chaveLimpa)) {
+                    chaveDisplay.classList.remove('show');
+                    btnAbrir.style.display = 'none';
+                    return;
+                }
+                // Mostrar chave limpa
+                chaveDisplay.textContent = chaveLimpa;
+                chaveDisplay.classList.add('show');
+                btnAbrir.style.display = 'block';
+                // Copiar automaticamente
+                copiarChave();
+            });
+
+            btnAbrir.addEventListener('click', function() {
+                if (!chaveLimpa) return;
+                let url;
+                if (radioHomolog.checked) {
+                    url = URL_HOMOLOG;
+                } else {
+                    url = URL_PRODUCAO;
+                }
+                // Abrir a página da SEFAZ em uma nova aba
+                window.open(url, '_blank');
+                // Mensagem de instrução
+                alert('A página da SEFAZ foi aberta. Cole a chave no campo (Ctrl+V) e resolva o captcha.');
+            });
+
+            // Remover erro ao digitar
+            chaveInput.addEventListener('input', function() {
+                erroChave.classList.remove('show');
+            });
+
+            // Atalho: Enter no campo aciona o botão Preparar
+            chaveInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    btnPreparar.click();
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
